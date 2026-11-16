@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   color-scheme: light;
   --ink: #17231e;
@@ -39,7 +43,7 @@ main { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 48px 0 64
 h1, h2, h3 { font-family: Manrope, 'DM Sans', sans-serif; letter-spacing: -0.7px; }
 h1 { max-width: 720px; margin: 0; font-size: clamp(32px, 5vw, 48px); line-height: 1.12; }
 .hero-copy { max-width: 650px; margin: 14px 0 0; color: var(--muted); font-size: 16px; line-height: 1.7; }
-.preview-pill { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; padding: 9px 13px; color: #825917; background: #fff6df; border: 1px solid #f0dfb0; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.preview-pill { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; padding: 9px 13px; color: #825917; background: #fff6df; border: 1px solid #f0dfb0; border-radius: 999px; font-size: 13px; font-weight: 700; }
 .notice { display: flex; align-items: flex-start; gap: 14px; padding: 19px 21px; border: 1px solid #d5e8da; border-radius: 16px; background: #edf7ef; }
 .notice-icon { flex: 0 0 auto; color: var(--green); }
 .notice strong { display: block; margin-bottom: 4px; font-size: 15px; }
