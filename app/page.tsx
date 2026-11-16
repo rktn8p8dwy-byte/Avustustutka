@@ -1,116 +1,41 @@
 'use client';
-
-import {
-  ArrowRight,
-  Bell,
-  CalendarDays,
-  FileText,
-  FolderOpen,
-  Landmark,
-  Search,
-  Sparkles,
-} from 'lucide-react';
-
-const tasks = [
-  { title: 'Lisää organisaation perustiedot', detail: 'Tiedot auttavat rajaamaan sopivia avustuksia.', icon: Landmark },
-  { title: 'Etsi sopivia avustuksia', detail: 'Tarkista aina ehdot ja määräajat myöntäjän sivulta.', icon: Search },
-  { title: 'Kokoa hakemuksen aineisto', detail: 'Pidä tarvittavat asiakirjat järjestyksessä.', icon: FolderOpen },
-];
+import { useState } from 'react';
+import { Sparkles, Upload, FileText, LayoutDashboard } from 'lucide-react';
 
 export default function Ohjaamo() {
   return (
-    <div className="page-shell">
-      <header className="topbar">
-        <a className="brand" href="#alku" aria-label="Avustustutka – etusivu">
-          <span className="brand-mark"><Landmark size={20} aria-hidden="true" /></span>
-          <span className="brand-name">Avustustutka</span>
-        </a>
-        <span className="topbar-note">Avustusten hakemisen apuna</span>
+    <main className="p-8 bg-slate-50 min-h-screen font-sans text-slate-900">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold">Avustustutka 🔥</h1>
+        <p className="text-slate-600">Digitaalinen Tirehtööri on valmis töihin.</p>
       </header>
 
-      <main id="alku">
-        <section className="hero" aria-labelledby="page-title">
-          <div>
-            <p className="eyebrow">Yhdistyksen ohjaamo</p>
-            <h1 id="page-title">Avustusten hakeminen, selkeämmin.</h1>
-            <p className="hero-copy">
-              Kokoa seuraavat tehtävät yhteen paikkaan. Aloita organisaation tiedoista,
-              etsi sopivia rahoitushakuja ja tarkista tärkeät päivämäärät virallisista lähteistä.
-            </p>
-          </div>
-          <span className="preview-pill"><Sparkles size={15} aria-hidden="true" /> Esiversio</span>
-        </section>
+      {/* Taikalaatikko */}
+      <div className="mb-8 bg-white p-10 rounded-3xl border-2 border-dashed border-indigo-300 text-center hover:border-indigo-500 transition cursor-pointer">
+        <Upload className="mx-auto w-12 h-12 text-indigo-400 mb-4" />
+        <h2 className="text-xl font-bold">Pudota mitä vain (PDF, kuitti, muistiinpano)</h2>
+        <p className="text-slate-500">Tirehtööri järjestää kaiken puolestasi.</p>
+      </div>
 
-        <section className="notice" aria-label="Esiversion huomautus">
-          <Bell className="notice-icon" size={21} aria-hidden="true" />
-          <div>
-            <strong>Tämä on käyttöliittymän esiversio</strong>
-            <p>Avustustietojen automaattista hakua, käyttäjätilejä, tietojen tallennusta tai muistutusten lähetystä ei ole vielä toteutettu. Älä lisää sivulle luottamuksellisia tietoja.</p>
-          </div>
-        </section>
-
-        <section aria-labelledby="overview-title">
-          <div className="section-heading">
-            <div>
-              <h2 id="overview-title">Ohjaamon aloitus</h2>
-              <p>Kolme askelta, joilla pääset alkuun.</p>
-            </div>
-          </div>
-          <div className="steps">
-            {tasks.map(({ title, detail, icon: Icon }, index) => (
-              <article className="step-card" key={title}>
-                <div className="status-card-top">
-                  <span className="step-number">{index + 1}</span>
-                  <Icon size={20} aria-hidden="true" />
-                </div>
-                <h3>{title}</h3>
-                <p>{detail}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section aria-labelledby="tools-title">
-          <div className="section-heading">
-            <div>
-              <h2 id="tools-title">Työkalut</h2>
-              <p>Näkymät ovat vielä suunnitteluvaiheessa.</p>
-            </div>
-          </div>
-          <div className="status-grid">
-            <article className="status-card">
-              <div className="status-card-top"><Search size={21} aria-hidden="true" /><span className="status-label">Tulossa</span></div>
-              <div className="status-label">Avustushaku</div>
-              <p className="status-value">Luotettavat lähteet</p>
-              <p className="status-help">Haku rakennetaan lähteineen, ehtoineen ja tarkistuspäivineen.</p>
-            </article>
-            <article className="status-card">
-              <div className="status-card-top"><CalendarDays size={21} aria-hidden="true" /><span className="status-label">Tulossa</span></div>
-              <div className="status-label">Määräajat</div>
-              <p className="status-value">Oma seuranta</p>
-              <p className="status-help">Määräaikoja ei vielä tallenneta eikä niistä lähetetä muistutuksia.</p>
-            </article>
-            <article className="status-card">
-              <div className="status-card-top"><FileText size={21} aria-hidden="true" /><span className="status-label">Tulossa</span></div>
-              <div className="status-label">Hakemuksen valmistelu</div>
-              <p className="status-value">Ohjeet ja tarkistuslista</p>
-              <p className="status-help">Tarkoitus on auttaa kokoamaan hakemus ilman perusteettomia lupauksia rahoituksesta.</p>
-            </article>
-          </div>
-        </section>
-
-        <section className="next-panel" aria-labelledby="next-title">
-          <div>
-            <h2 id="next-title">Tarkista tiedot aina alkuperäisestä lähteestä</h2>
-            <p>Avustusten ehdot ja hakuajat voivat muuttua. Tämä esiversio ei vielä näytä ajantasaista avustusdataa.</p>
-          </div>
-          <a className="next-link" href="https://www.google.com/search?q=avustukset+yhdistyksille" target="_blank" rel="noreferrer">
-            Etsi virallisia lähteitä <ArrowRight size={17} aria-hidden="true" />
-          </a>
-        </section>
-      </main>
-
-      <footer>Avustustutka on kehitysvaiheessa. Tarkista ehdot ja määräajat avustuksen myöntäjän virallisesta lähteestä.</footer>
-    </div>
+      {/* Ohjaamo-kortit */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-2xl border shadow-sm">
+          <p className="text-sm text-slate-500">Rahatilanne</p>
+          <p className="text-2xl font-bold text-emerald-600">14 250 €</p>
+        </div>
+        <div className="bg-white p-6 rounded-2xl border shadow-sm">
+          <p className="text-sm text-slate-500">Seuraava määräaika</p>
+          <p className="text-xl font-bold text-amber-600">Kokous 31.5.</p>
+        </div>
+        <div className="bg-white p-6 rounded-2xl border shadow-sm">
+          <p className="text-sm text-slate-500">Organisaation muisti</p>
+          <p className="text-xl font-bold">42 tiedostoa</p>
+        </div>
+        <button className="bg-indigo-900 text-white p-6 rounded-2xl hover:bg-indigo-800 transition flex items-center justify-center gap-2">
+          <Sparkles className="w-5 h-5" />
+          Palkkaa Tirehtööri
+        </button>
+      </div>
+    </main>
   );
 }
