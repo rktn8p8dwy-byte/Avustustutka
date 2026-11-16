@@ -1,38 +1,40 @@
 import { NextResponse } from 'next/server';
 
+// Tirehtöörin vastaanottoreitti. Älä lokita sisältöä: se voi sisältää henkilötietoja.
 export async function POST(req: Request) {
   try {
     const body: unknown = await req.json();
-    const minutes =
-      typeof body === 'object' && body !== null && 'minutes' in body
-        ? body.minutes
-        : null;
-
-    if (typeof minutes !== 'string' || minutes.trim().length === 0) {
-      return NextResponse.json(
-        { error: 'Lisää pöytäkirjan teksti ennen lähetystä.' },
-        { status: 400 },
-      );
+    if (typeof body !== 'object' || body === null) {
+      return NextResponse.json({ error: 'Virheellinen pyyntö.' }, { status: 400 });
     }
 
-    if (minutes.length > 200_000) {
+    const data = body as Record<string, unknown>;
+    // `minutes` säilyttää yhteensopivuuden vallanvaihto-sivun nykyisen lomakkeen kanssa.
+    const content = typeof data.content === 'string' ? data.content : data.minutes;
+    const type = typeof data.type === 'string' ? data.type : 'pöytäkirja';
+
+    if (typeof content !== 'string' || content.trim().length === 0) {
+      return NextResponse.json({ error: 'Lisää sisältö ennen lähetystä.' }, { status: 400 });
+    }
+    if (content.length > 200_000) {
       return NextResponse.json(
-        { error: 'Teksti on liian pitkä. Enimmäispituus on 200 000 merkkiä.' },
+        { error: 'Sisältö on liian pitkä. Enimmäispituus on 200 000 merkkiä.' },
         { status: 413 },
       );
     }
+    if (type.length > 100) {
+      return NextResponse.json({ error: 'Tiedoston tyyppi on liian pitkä.' }, { status: 400 });
+    }
 
-    // TODO: Lisää tähän myöhemmin dokumenttien käsittely ja OpenAI-integraatio.
-    // Älä palauta tai lokita pöytäkirjan sisältöä: se voi sisältää henkilötietoja.
+    // Sisältö vastaanotetaan, mutta sitä ei vielä analysoida eikä tallenneta.
+    const message = 'Tirehtööri on vastaanottanut tiedon. Automaattinen analyysi ei ole vielä käytössä.';
     return NextResponse.json({
-      message:
-        'Tirehtööri vastaanotti pöytäkirjan tekstin. Automaattinen analyysi ja PRH-ilmoituksen muodostus eivät ole vielä käytössä.',
+      status: 'success',
+      message,
+      analysis: `Tirehtööri tunnisti tiedoston tyypiksi: ${type}`,
       received: true,
     });
   } catch {
-    return NextResponse.json(
-      { error: 'Pyyntöä ei voitu käsitellä. Lähetä sisältö JSON-muodossa.' },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'Tirehtöörillä oli häiriö.' }, { status: 400 });
   }
 }
