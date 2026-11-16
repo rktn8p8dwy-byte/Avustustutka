@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -7,11 +8,7 @@ export const metadata: Metadata = {
     'Selkeä työtila avustusten etsimiseen, hakemusten valmisteluun ja määräaikojen seurantaan.',
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html lang="fi">
       <body>{children}</body>
