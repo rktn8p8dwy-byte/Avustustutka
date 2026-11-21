@@ -6,7 +6,6 @@ export default function VallanvaihtoPage() {
   const [minutes, setMinutes] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -20,31 +19,38 @@ export default function VallanvaihtoPage() {
       return;
     }
 
-    void file.text().then(setMinutes).catch(() => {
+    // Limit the file before reading it into browser memory. A large file must not
+    // silently overwrite a draft or freeze a phone on low memory.
+    if (file.size > 200_000) {
+      setError('Tiedosto on liian suuri (enintään 200 kt). Liitä tarvittaessa lyhyempi teksti.');
+      event.target.value = '';
+      return;
+    }
+    void file.text().then((text) => {
+      if (text.length > 200_000) {
+        setError('Tiedoston teksti on liian pitkä (enintään 200 000 merkkiä).');
+        return;
+      }
+      setMinutes(text);
+    }).catch(() => {
       setError('Tiedostoa ei voitu lukea. Voit myös liittää pöytäkirjan tekstin alla olevaan kenttään.');
     });
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError('');
     setMessage('');
-    setIsSubmitting(true);
-
-    try {
-      const response = await fetch('/api/tirehtoori', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ minutes }),
-      });
-      const result = await response.json();
-      if (!response.ok) setError(result.error ?? 'Pöytäkirjan lähetys epäonnistui.');
-      else setMessage(result.message);
-    } catch {
-      setError('Palveluun ei saatu yhteyttä. Yritä myöhemmin uudelleen.');
-    } finally {
-      setIsSubmitting(false);
+    if (!minutes.trim()) {
+      setError('Lisää pöytäkirjan teksti.');
+      return;
     }
+    if (minutes.length > 200_000) {
+      setError('Teksti on liian pitkä.');
+      return;
+    }
+    setMessage('Teksti tarkistettu vain tällä laitteella. Merkkejä: ' + minutes.length +
+      '. Tekstiä ei lähetetty palvelimelle eikä tallennettu.');
   }
 
   return (
@@ -54,7 +60,7 @@ export default function VallanvaihtoPage() {
         <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-indigo-800">Tirehtöörin työkalu</p>
         <h1 className="text-3xl font-bold">Vallanvaihdoksen pöytäkirja</h1>
         <p className="mt-3 text-slate-600">
-          Tuo pöytäkirjan tekstiversio tai liitä teksti kenttään. Tämä esiversio vastaanottaa tekstin, mutta ei vielä analysoi sitä eikä muodosta tai lähetä PRH-ilmoitusta.
+          Tuo pöytäkirjan tekstiversio tai liitä teksti kenttään. Tämä esiversio tarkistaa tekstin pituuden paikallisesti. Tekstiä ei lähetetä palvelimelle, analysoida eikä siitä muodosteta PRH-ilmoitusta.
         </p>
       </header>
 
@@ -69,13 +75,13 @@ export default function VallanvaihtoPage() {
           <textarea id="minutes" value={minutes} onChange={(event) => setMinutes(event.target.value)} rows={10} maxLength={200_000} required placeholder="Liitä tähän pöytäkirjan teksti. Älä lisää tarpeettomia henkilötietoja." className="w-full rounded-xl border border-slate-300 p-3" />
           <p className="mt-1 text-right text-xs text-slate-500">{minutes.length} / 200 000 merkkiä</p>
         </div>
-        <button type="submit" disabled={isSubmitting || !minutes.trim()} className="rounded-xl bg-indigo-900 px-5 py-3 font-semibold text-white disabled:opacity-50">
-          {isSubmitting ? 'Lähetetään…' : 'Lähetä Tirehtöörille'}
+        <button type="submit" disabled={!minutes.trim()} className="rounded-xl bg-indigo-900 px-5 py-3 font-semibold text-white disabled:opacity-50">
+          Tarkista teksti paikallisesti
         </button>
         {error && <p role="alert" className="rounded-lg bg-red-50 p-3 text-sm text-red-800">{error}</p>}
         {message && <p role="status" className="rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900">{message}</p>}
       </form>
-      <p className="mt-5 text-sm text-slate-500">Älä lähetä luottamuksellisia tietoja. Palvelin ei tällä hetkellä tallenna tekstiä eikä tuota virallista PRH-ilmoitusta.</p>
+      <p className="mt-5 text-sm text-slate-500">Vältä tarpeettomia henkilötietoja. Teksti pysyy selaimessa eikä sitä lähetetä palvelimelle. Sulje sivu poistaaksesi syöttämäsi tekstin.</p>
     </main>
   );
 }
