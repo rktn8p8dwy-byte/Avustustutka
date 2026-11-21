@@ -16,3 +16,10 @@ test('minutes tool never uploads entered minutes to the placeholder API', () => 
   assert.doesNotMatch(page, /XMLHttpRequest|sendBeacon/);
   assert.match(page, /Tarkista teksti paikallisesti/);
 });
+
+test('local minutes file is size-limited before reading', () => {
+  assert.match(page, /file\.size\s*>\s*200_000/);
+  assert.match(page, /file\.text\(\)/);
+  assert.match(page, /text\.length\s*>\s*200_000/);
+  assert.ok(page.indexOf('file.size > 200_000') < page.indexOf('file.text()'));
+});
