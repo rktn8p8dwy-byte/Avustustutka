@@ -19,7 +19,20 @@ export default function VallanvaihtoPage() {
       return;
     }
 
-    void file.text().then(setMinutes).catch(() => {
+    // Limit the file before reading it into browser memory. A large file must not
+    // silently overwrite a draft or freeze a phone on low memory.
+    if (file.size > 200_000) {
+      setError('Tiedosto on liian suuri (enintään 200 kt). Liitä tarvittaessa lyhyempi teksti.');
+      event.target.value = '';
+      return;
+    }
+    void file.text().then((text) => {
+      if (text.length > 200_000) {
+        setError('Tiedoston teksti on liian pitkä (enintään 200 000 merkkiä).');
+        return;
+      }
+      setMinutes(text);
+    }).catch(() => {
       setError('Tiedostoa ei voitu lukea. Voit myös liittää pöytäkirjan tekstin alla olevaan kenttään.');
     });
   }
